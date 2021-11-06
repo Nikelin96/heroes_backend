@@ -73,10 +73,11 @@ test('deleteHeroAsync calls client once', async () => {
   }
 
   const sut = new PostgresRepository(clientMock);
+  const heroId = 1;
 
   // act
-  await sut.deleteHeroAsync(1);
+  await sut.deleteHeroAsync(heroId);
 
   // assert
-  expect(sut.client.query).toHaveBeenCalledTimes(1);
+  expect(sut.client.query).toHaveBeenCalledWith('DELETE FROM "Hero" WHERE "Id" = ($1)', [heroId]);;
 });

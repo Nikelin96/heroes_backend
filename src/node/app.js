@@ -10,21 +10,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const client = new Client({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'postgres',
-    password: 'docker',
-    port: 5432,
+    user: process.env.dbUser ?? 'postgres',
+    host: process.env.dbHost ?? 'localhost',
+    database: process.env.dbName ?? 'postgres',
+    password: process.env.dbPassword ?? 'docker',
+    port: process.env.dbPort ?? 5432,
 });
 
-client.connect(function(error) {
-    if (error) { throw error };
+client.connect((error) => {
+    if (error) {
+        throw error
+    };
     console.log('Connected!');
 });
 
 const repository = new PostgresRepository(client);
 
-app.get('/', async(request, response) => {
+app.get('/', async (request, response) => {
     console.log(`GET heroes`);
 
     let heroes = await repository.getHeroesAsync();
@@ -38,7 +40,7 @@ app.get('/', async(request, response) => {
     completeResponse(response, 200, heroes);
 });
 
-app.get('/:id', async(request, response) => {
+app.get('/:id', async (request, response) => {
     console.log('GET hero by id: ', request.params.id);
 
     let heroes = await repository.getHeroesAsync();
@@ -49,14 +51,14 @@ app.get('/:id', async(request, response) => {
     completeResponse(response, 200, heroes);
 });
 
-app.post('/', async(request, response) => {
+app.post('/', async (request, response) => {
     const hero = request.body;
     await repository.createHeroAsync(hero);
 
     completeResponse(response, 200, hero);
 });
 
-app.delete('/:id', async(request, response) => {
+app.delete('/:id', async (request, response) => {
     console.log('Delete hero by id: ', request.params.id);
 
     const id = parseInt(request.params.id);
@@ -65,7 +67,7 @@ app.delete('/:id', async(request, response) => {
     completeResponse(response, 200);
 });
 
-app.put('/', async(request, response) => {
+app.put('/', async (request, response) => {
     const hero = request.body;
 
     await repository.updateHeroAsync(hero);
@@ -81,12 +83,13 @@ const completeResponse = (response, statusCode, body) => {
         response.json(body);
     } else {
         response.end();
-    }  
+    }
 }
 
 // setup listening
-const hostname = 'localhost';
-const port =  process.env.port ?? 3000;
+const hostname = process.env.serverHost ?? 'localhost';
+const port = process.env.serverPort ?? 3000;
+
 app.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
 });
