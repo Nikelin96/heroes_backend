@@ -74,20 +74,19 @@ app.put('/', async(request, response) => {
 });
 
 const completeResponse = (response, statusCode, body) => {
-    response.statusCode = statusCode;
-    response.setHeader('Content-Type', 'application/json');
+    response.status(statusCode);
     response.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
 
     if (body) {
-        response.end(JSON.stringify(body));
+        response.json(body);
     } else {
         response.end();
-    }
+    }  
 }
 
 // setup listening
 const hostname = 'localhost';
-const port = 3000;
+const port =  process.env.port ?? 3000;
 app.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
 });

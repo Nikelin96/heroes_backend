@@ -1,60 +1,57 @@
 class PostgresRepository {
-    constructor(client) {
-        this.client = client;
-    }
+  constructor(client) {
+    this.client = client;
+  }
 
-    getHeroesAsync = async() => {
-        console.log('Receiving heroes');
+  createHeroAsync = async (hero) => {
+    console.log('Creating hero');
 
-        const records = await this.client.query('SELECT * FROM "Hero"');
+    const query = 'INSERT INTO "Hero" ("Name") VALUES ($1) RETURNING *';
+    let queryParameters = [hero.name];
 
-        return records.rows.map(hero => {
-            return { id: hero.Id, name: hero.Name }
-        });
-    };
+    this.client.query(query, queryParameters)
+      .then(res => {
+        console.log(res.rows);
+      })
+      .catch(error => {
+        console.error(error.stack);
+      });
+  };
 
-    deleteHeroAsync = async(id) => {
-        console.log('Deleting hero by id: ', id);
+  getHeroesAsync = async () => {
+    console.log('Receiving heroes');
 
-        const query = 'DELETE FROM "Hero" WHERE "Id" = ($1)';
-        let queryParameters = [id];
+    const records = await this.client.query('SELECT * FROM "Hero"');
 
-        await this.client.query(query, queryParameters);
-    };
+    return records.rows.map(hero => {
+      return { id: hero.Id, name: hero.Name }
+    });
+  };
 
-    createHeroAsync = async(hero) => {
-        console.log('Creating hero');
+  updateHeroAsync = async (hero) => {
+    console.log('Updating hero');
 
-        const query = 'INSERT INTO "Hero" ("Name") VALUES ($1) RETURNING *';
-        let queryParameters = [hero.name];
+    const query = 'UPDATE "Hero" SET "Name" = ($1) WHERE "Id" = ($2)'
 
-        this.client.query(query, queryParameters)
-            .then(res => {
-                console.log(res.rows);
-            })
-            .catch(error => {
-                console.error(error.stack);
-            });
-    };
+    let queryParameters = [hero.name, hero.id];
 
-    updateHeroAsync = async(hero) => {
-        console.log('Updating hero');
+    this.client.query(query, queryParameters)
+      .then(res => {
+        console.log(res.rows);
+      })
+      .catch(error => {
+        console.error(error.stack);
+      });
+  };
 
-        const query = `
-        UPDATE "Hero" 
-            SET "Name" = ($1) 
-        WHERE "Id" = ($2)`;
+  deleteHeroAsync = async (id) => {
+    console.log('Deleting hero by id: ', id);
 
-        let queryParameters = [hero.name, hero.id];
+    const query = 'DELETE FROM "Hero" WHERE "Id" = ($1)';
+    let queryParameters = [id];
 
-        this.client.query(query, queryParameters)
-            .then(res => {
-                console.log(res.rows);
-            })
-            .catch(error => {
-                console.error(error.stack);
-            });
-    };
+    await this.client.query(query, queryParameters);
+  };
 }
 
 module.exports = PostgresRepository
