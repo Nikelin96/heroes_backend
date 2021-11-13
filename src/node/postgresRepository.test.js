@@ -1,11 +1,11 @@
-const PostgresRepository = require('./postgresRepository');
+const getRepository = require('./postgresRepository');
 
 test('constructor returns instance', () => {
   // arrange
   let clientMock = new Object();
 
   // act
-  let sut = new PostgresRepository(clientMock);
+  let sut = getRepository(clientMock);
 
   // assert
   expect(sut).not.toBeNull();
@@ -19,7 +19,7 @@ test('createHeroAsync calls client once', async () => {
       return { rows: [] };
     })
   }
-  const sut = new PostgresRepository(clientMock);
+  const sut = getRepository(clientMock);
   const hero = { name: "name1" };
 
   // act
@@ -37,7 +37,7 @@ test('getHeroesAsync returns heroes', async () => {
     })
   }
   const expected = [{ id: 1, name: "Name1" }, { id: 2, name: "Name2" }, { id: 3, name: "Name3" }];
-  const sut = new PostgresRepository(clientMock);
+  const sut = getRepository(clientMock);
 
   // act
   const actual = await sut.getHeroesAsync();
@@ -54,7 +54,7 @@ test('updateHeroAsync calls client once', async () => {
       return { rows: [] };
     })
   }
-  const sut = new PostgresRepository(clientMock);
+  const sut = getRepository(clientMock);
   const hero = { name: "name1", id: 1 }
 
   // act
@@ -72,7 +72,7 @@ test('deleteHeroAsync calls client once', async () => {
     })
   }
 
-  const sut = new PostgresRepository(clientMock);
+  const sut = getRepository(clientMock);
   const heroId = 1;
 
   // act

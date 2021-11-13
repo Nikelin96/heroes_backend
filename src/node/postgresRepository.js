@@ -10,8 +10,8 @@ class PostgresRepository {
     let queryParameters = [hero.name];
 
     this.client.query(query, queryParameters)
-      .then(res => {
-        console.log(res.rows);
+      .then(result => {
+        console.log(result.rows);
       })
       .catch(error => {
         console.error(error.stack);
@@ -54,4 +54,8 @@ class PostgresRepository {
   };
 }
 
-module.exports = PostgresRepository
+const getRepository = (client) => {
+  return new PostgresRepository(client);
+}
+
+module.exports = getRepository;
