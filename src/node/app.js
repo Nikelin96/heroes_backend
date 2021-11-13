@@ -32,8 +32,8 @@ app.get('/:id', async (request, response) => {
 
     let heroes = await repository.getHeroesAsync();
 
-    const id = parseInt(request.params.id);
-    heroes = heroes.find(heroes => heroes.id == id);
+   // const id = parseInt(request.params.id);
+   // heroes = heroes.find(heroes => heroes.id == id);
 
     completeResponse(response, 200, heroes);
 });
