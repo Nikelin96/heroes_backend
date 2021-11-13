@@ -2,29 +2,16 @@ const http = require('http');
 const url = require('url');
 const querystring = require('querystring');
 const express = require('express')
-const { Client } = require('pg');
+
 const app = express();
-const PostgresRepository = require('./postgresRepository');
+const getDbClient = require('./dependencyInjector');
+const getRepository = require('./postgresRepository');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const client = new Client({
-    user: process.env.dbUser ?? 'postgres',
-    host: process.env.dbHost ?? 'localhost',
-    database: process.env.dbName ?? 'postgres',
-    password: process.env.dbPassword ?? 'docker',
-    port: process.env.dbPort ?? 5432,
-});
-
-client.connect((error) => {
-    if (error) {
-        throw error
-    };
-    console.log('Connected!');
-});
-
-const repository = new PostgresRepository(client);
+let client = getDbClient(process.env.isUnderTest);
+let repository = getRepository(client);
 
 app.get('/', async (request, response) => {
     console.log(`GET heroes`);
@@ -86,10 +73,13 @@ const completeResponse = (response, statusCode, body) => {
     }
 }
 
-// setup listening
-const hostname = process.env.serverHost ?? 'localhost';
-const port = process.env.serverPort ?? 3000;
+const getApp = (mock) => {
+    if (mock) {
+        repository = getRepository(mock);
+    }
+    return app;
+}
 
-app.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
-});
+module.exports = {
+    getApp: getApp
+};

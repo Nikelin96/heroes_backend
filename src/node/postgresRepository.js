@@ -54,4 +54,8 @@ class PostgresRepository {
   };
 }
 
-module.exports = PostgresRepository
+const getRepository = (client) => {
+  return new PostgresRepository(client);
+}
+
+module.exports = getRepository;
