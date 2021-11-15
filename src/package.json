@@ -7,8 +7,8 @@
   },
   "scripts": {
     "build": "node -v",
-    "serve": "nodemon ./node/app.js",
-    "start": "node ./node/app.js",
+    "serve": "nodemon ./node/server.js",
+    "start": "node ./node/server.js",
     "test": "jest"
   },
   "devDependencies": {
