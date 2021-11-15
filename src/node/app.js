@@ -4,7 +4,7 @@ const querystring = require('querystring');
 const express = require('express')
 
 const app = express();
-const getDbClient = require('./dependencyInjector');
+const getDbClient = require('./postgresDbClient');
 const getRepository = require('./postgresRepository');
 
 app.use(express.urlencoded({ extended: true }));
@@ -65,7 +65,7 @@ app.delete('/:id', async (request, response) => {
 
 const completeResponse = (response, statusCode, body) => {
     response.status(statusCode);
-    response.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+    // response.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
 
     if (body) {
         response.json(body);
