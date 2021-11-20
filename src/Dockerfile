@@ -8,8 +8,10 @@ RUN npm install
 
 COPY . .
 
-ENV PORT 4200
+ENV PORT 3000
+# ENV DBPORT 5432
 
 EXPOSE ${PORT}
+# EXPOSE ${DBPORT}
 
-CMD ["node", "./node/server.js"] 
+CMD ["node", "./node/server.js"]
