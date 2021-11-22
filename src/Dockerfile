@@ -10,7 +10,7 @@ COPY . .
 
 ENV port 3000
 ENV host "0.0.0.0"
-ENV dbHost "172.17.0.2"
+ENV dbHost "postgres_container"
 ENV dbName "postgres"
 ENV dbUser "postgres"
 ENV dbPassword "docker"
