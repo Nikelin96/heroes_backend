@@ -24,7 +24,7 @@ class PostgresRepository {
     const records = await this.client.query('SELECT * FROM "hero"');
 
     return records.rows.map(hero => {
-      return { id: hero.Id, name: hero.Name }
+      return { id: hero.id, name: hero.name }
     });
   };
 

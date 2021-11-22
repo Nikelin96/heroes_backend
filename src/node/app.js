@@ -16,15 +16,15 @@ let repository = getRepository(client);
 app.get('/', async (request, response) => {
     console.log(`GET heroes`);
 
-    // let heroes = await repository.getHeroesAsync();
+    let heroes = await repository.getHeroesAsync();
 
-    // let searchText = request.query.searchText;
-    // if (searchText) {
-    //     searchText = searchText.toLowerCase();
-    //     heroes = heroes.find(heroes => heroes.name.toLowerCase().startsWith(searchText));
-    // }
+    let searchText = request.query.searchText;
+    if (searchText) {
+        searchText = searchText.toLowerCase();
+        heroes = heroes.find(heroes => heroes.name.toLowerCase().startsWith(searchText));
+    }
 
-    completeResponse(response, 200, 'GET heroes');
+    completeResponse(response, 200, heroes);
 });
 
 app.get('/:id', async (request, response) => {
