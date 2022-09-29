@@ -1,24 +1,24 @@
-const getRepository = require('./postgresRepository');
+const getRepository = require("./postgresRepository");
 
-test('constructor returns instance', () => {
+test("constructor returns instance", () => {
   // arrange
-  let clientMock = new Object();
+  const clientMock = new Object();
 
   // act
-  let sut = getRepository(clientMock);
+  const sut = getRepository(clientMock);
 
   // assert
   expect(sut).not.toBeNull();
   expect(sut.client).toBe(clientMock);
 });
 
-test('createHeroAsync calls client once', async () => {
+test("createHeroAsync calls client once", async () => {
   // arrange
   const clientMock = {
     query: jest.fn().mockImplementation(async () => {
       return { rows: [] };
-    })
-  }
+    }),
+  };
   const sut = getRepository(clientMock);
   const hero = { name: "name1" };
 
@@ -26,17 +26,30 @@ test('createHeroAsync calls client once', async () => {
   await sut.createHeroAsync(hero);
 
   // assert
-  expect(sut.client.query).toHaveBeenCalledWith('INSERT INTO "hero" ("name") VALUES ($1) RETURNING *', [hero.name]);
+  expect(sut.client.query).toHaveBeenCalledWith(
+    'INSERT INTO "hero" ("name") VALUES ($1) RETURNING *',
+    [hero.name]
+  );
 });
 
-test('getHeroesAsync returns heroes', async () => {
+test("getHeroesAsync returns heroes", async () => {
   // arrange
   const clientMock = {
     query: jest.fn().mockImplementation(async () => {
-      return { rows: [{ id: 1, name: "name1" }, { id: 2, name: "name2" }, { id: 3, name: "name3" }] };
-    })
-  }
-  const expected = [{ id: 1, name: "name1" }, { id: 2, name: "name2" }, { id: 3, name: "name3" }];
+      return {
+        rows: [
+          { id: 1, name: "name1" },
+          { id: 2, name: "name2" },
+          { id: 3, name: "name3" },
+        ],
+      };
+    }),
+  };
+  const expected = [
+    { id: 1, name: "name1" },
+    { id: 2, name: "name2" },
+    { id: 3, name: "name3" },
+  ];
   const sut = getRepository(clientMock);
 
   // act
@@ -44,33 +57,36 @@ test('getHeroesAsync returns heroes', async () => {
 
   // assert
   expect(actual).toStrictEqual(expected);
-  expect(sut.client.query).toHaveBeenCalledWith('SELECT * FROM "hero"')
+  expect(sut.client.query).toHaveBeenCalledWith('SELECT * FROM "hero"');
 });
 
-test('updateHeroAsync calls client once', async () => {
+test("updateHeroAsync calls client once", async () => {
   // arrange
   const clientMock = {
     query: jest.fn().mockImplementation(async () => {
       return { rows: [] };
-    })
-  }
+    }),
+  };
   const sut = getRepository(clientMock);
-  const hero = { name: "name1", id: 1 }
+  const hero = { name: "name1", id: 1 };
 
   // act
   await sut.updateHeroAsync(hero);
 
   // assert
-  expect(sut.client.query).toHaveBeenCalledWith('UPDATE "hero" SET "name" = ($1) WHERE "id" = ($2)', [hero.name, hero.id]);
+  expect(sut.client.query).toHaveBeenCalledWith(
+    'UPDATE "hero" SET "name" = ($1) WHERE "id" = ($2)',
+    [hero.name, hero.id]
+  );
 });
 
-test('deleteHeroAsync calls client once', async () => {
+test("deleteHeroAsync calls client once", async () => {
   // arrange
   const clientMock = {
     query: jest.fn().mockImplementation(async () => {
       return { rows: [] };
-    })
-  }
+    }),
+  };
 
   const sut = getRepository(clientMock);
   const heroId = 1;
@@ -79,5 +95,8 @@ test('deleteHeroAsync calls client once', async () => {
   await sut.deleteHeroAsync(heroId);
 
   // assert
-  expect(sut.client.query).toHaveBeenCalledWith('DELETE FROM "hero" WHERE "id" = ($1)', [heroId]);;
+  expect(sut.client.query).toHaveBeenCalledWith(
+    'DELETE FROM "hero" WHERE "id" = ($1)',
+    [heroId]
+  );
 });

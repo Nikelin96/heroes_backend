@@ -19,8 +19,8 @@ const setupPostgresClient = () => {
   return client;
 };
 
-const getDbClient = (isUnderTest, mock) => {
-  return isUnderTest ? mock : setupPostgresClient();
+const getDbClient = (mock) => {
+  return mock || setupPostgresClient();
 };
 
 module.exports = getDbClient;
