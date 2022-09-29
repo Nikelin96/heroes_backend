@@ -9,7 +9,8 @@
     "build": "node -v",
     "serve": "nodemon ./node/server.js",
     "start": "node ./node/server.js",
-    "test": "jest"
+    "test": "jest --detectOpenHandles",
+    "test debug": "node --inspect-brk .\\node_modules\\jest\\bin\\jest.js --runInBand"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
