@@ -3,54 +3,42 @@ class PostgresRepository {
     this.client = client;
   }
 
-  createHeroAsync = async (hero) => {
-    console.log('Creating hero');
+  getUnitsAsync = async () => {
+    console.log('Receiving units');
 
-    const query = 'INSERT INTO "hero" ("name") VALUES ($1) RETURNING *';
-    let queryParameters = [hero.name];
+    const query = `
+      SELECT 
+        unit.name AS unit_name
+        , unit_stat.hit_points AS unit_hp
+        , unit_stat.damage_points AS unit_damage
+        , unit_stat.defense_points AS unit_defense
+        , unit_stat.health_points AS unit_health
+        , unit_storage.wood AS unit_wood
+        , unit_storage.food AS unit_food
+        , unit_storage.gold AS unit_gold
+        , unit_storage.stone AS unit_stone  
+        , equipment.name AS equipment_name
+        , equipment_stat.hit_points AS equipment_hp
+        , equipment_stat.damage_points AS equipment_damage
+        , equipment_stat.defense_points AS equipment_defense
+        , equipment_stat.health_points AS equipment_health
+        , equipment_storage.wood AS equipment_wood
+        , equipment_storage.food AS equipment_food
+        , equipment_storage.gold AS equipment_gold
+        , equipment_storage.stone AS equipment_stone
+      FROM unit AS unit
+        JOIN stat AS unit_stat ON unit_stat.id = unit.stat_id
+        JOIN storage AS unit_storage ON unit_storage.id = unit.storage_id
+        JOIN equipment AS equipment ON equipment.unit_id = unit.id
+        JOIN stat AS equipment_stat ON equipment_stat.id = equipment.stat_id
+        LEFT JOIN storage AS equipment_storage ON equipment_storage.id = equipment.storage_id;
+      `
 
-    this.client.query(query, queryParameters)
-      .then(result => {
-        console.log(result.rows);
-      })
-      .catch(error => {
-        console.error(error.stack);
-      });
-  };
+    const records = await this.client.query(query);
 
-  getHeroesAsync = async () => {
-    console.log('Receiving heroes');
-
-    const records = await this.client.query('SELECT * FROM "hero"');
-
-    return records.rows.map(hero => {
-      return { id: hero.id, name: hero.name }
+    return records.rows.map(record => {
+      return record;
     });
-  };
-
-  updateHeroAsync = async (hero) => {
-    console.log('Updating hero');
-
-    const query = 'UPDATE "hero" SET "name" = ($1) WHERE "id" = ($2)'
-
-    let queryParameters = [hero.name, hero.id];
-
-    this.client.query(query, queryParameters)
-      .then(res => {
-        console.log(res.rows);
-      })
-      .catch(error => {
-        console.error(error.stack);
-      });
-  };
-
-  deleteHeroAsync = async (id) => {
-    console.log('Deleting hero by id: ', id);
-
-    const query = 'DELETE FROM "hero" WHERE "id" = ($1)';
-    let queryParameters = [id];
-
-    await this.client.query(query, queryParameters);
   };
 }
 

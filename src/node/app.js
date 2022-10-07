@@ -5,55 +5,15 @@ function setupApplication(repository) {
   expressServer.use(express.urlencoded({ extended: true }));
   expressServer.use(express.json());
 
-  expressServer.get("/", async (request, response) => {
-    console.log(`GET heroes`);
-
-    let heroes = await repository.getHeroesAsync();
-
-    let searchText = request.query.searchText;
-    if (searchText) {
-      searchText = searchText.toLowerCase();
-      heroes = heroes.find((heroes) =>
-        heroes.name.toLowerCase().startsWith(searchText)
-      );
-    }
-
-    completeResponse(response, 200, heroes);
-  });
-
   expressServer.get("/:id", async (request, response) => {
-    console.log("GET hero by id: ", request.params.id);
+    console.log("GET unit by id: ", request.params.id);
 
-    let heroes = await repository.getHeroesAsync();
+    let units = await repository.getUnitsAsync();
 
-    const id = parseInt(request.params.id);
-    heroes = heroes.find((heroes) => heroes.id == id);
+    // const id = parseInt(request.params.id);
+    // heroes = heroes.find((heroes) => heroes.id == id);
 
-    completeResponse(response, 200, heroes);
-  });
-
-  expressServer.post("/", async (request, response) => {
-    const hero = request.body;
-    await repository.createHeroAsync(hero);
-
-    completeResponse(response, 201, hero);
-  });
-
-  expressServer.put("/", async (request, response) => {
-    const hero = request.body;
-
-    await repository.updateHeroAsync(hero);
-
-    completeResponse(response, 200);
-  });
-
-  expressServer.delete("/:id", async (request, response) => {
-    console.log("Delete hero by id: ", request.params.id);
-
-    const id = parseInt(request.params.id);
-    await repository.deleteHeroAsync(id);
-
-    completeResponse(response, 200);
+    completeResponse(response, 200, units);
   });
 
   const completeResponse = (response, statusCode, body) => {
