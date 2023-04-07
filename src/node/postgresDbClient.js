@@ -1,19 +1,27 @@
 const { Client } = require("pg");
+const { dbConfig } = require("./config");
 
 const setupPostgresClient = () => {
   const client = new Client({
-    user: process.env.dbUser ?? "postgres",
-    host: process.env.dbHost ?? "localhost",
-    database: process.env.dbName ?? "postgres",
-    password: process.env.dbPassword ?? "docker",
-    port: process.env.dbPort ?? 5432,
+    user: dbConfig.user,
+    host: dbConfig.host,
+    database: dbConfig.database,
+    password: dbConfig.password,
+    port: dbConfig.port,
   });
 
   client.connect((error) => {
     if (error) {
-      throw error;
+      console.error("Error connecting to database:", error);
+      client.end();
+    } else {
+      console.log("Connected to database!");
     }
-    console.log("Connected!");
+  });
+
+  client.on("error", (error) => {
+    console.error("Database error:", error);
+    client.end();
   });
 
   return client;
